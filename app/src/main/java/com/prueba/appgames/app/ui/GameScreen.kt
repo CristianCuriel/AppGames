@@ -1,37 +1,49 @@
 package com.prueba.appgames.app.ui
 
+import GameCard
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.collectLatest
+import com.prueba.appgames.app.data.Models.listGamesModel
 
 @Composable
 fun NavManager(viewModel: GameViewModel) {
-    val gamesList by viewModel.games.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = viewModel.showErrorToastChannel) {
-        viewModel.showErrorToastChannel.collectLatest { show ->
-            if (show) {
-                Toast.makeText(
-                    context, "Error", Toast.LENGTH_SHORT
-                ).show()
-            }
+
+    when(uiState){
+
+        is GameUiState.Error -> {
+            Toast.makeText(context,"${(uiState as GameUiState.Error).exception}", LENGTH_SHORT).show()
+        }
+
+        GameUiState.Loading -> {
+            CircularProgressIndicator()
+        }
+
+        is GameUiState.Success -> {
+            val games = (uiState as GameUiState.Success).data
+            ItemsGamesView(games)
         }
     }
 
+}// NavManager
+
+@Composable
+fun ItemsGamesView(games: List<listGamesModel>){
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -39,9 +51,12 @@ fun NavManager(viewModel: GameViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(gamesList) { game ->
-            Text(text = "${game.name}")
-
+        items(games) { game ->
+            //Text(text = game.name)
+            GameCard(
+                backgroundImage = game.background_image,
+                gameTitle = game.name,
+            )
         }
     }
-}
+} //ItemsGamesView

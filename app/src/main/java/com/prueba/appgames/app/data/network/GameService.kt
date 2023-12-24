@@ -12,7 +12,7 @@ class GameService {
     suspend fun getGames(): List<listGamesModel>{
         return withContext(Dispatchers.IO){
             val reponse = retrofit.create(RetrofitService::class.java).doGames()
-            reponse.body()?.listGames?: emptyList()
+            reponse.body()?.listGames!!
         }
     }
 }

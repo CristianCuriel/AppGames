@@ -1,6 +1,5 @@
 package com.prueba.appgames.app.data
 
-import com.prueba.appgames.app.data.Models.listGamesModel
 import com.prueba.appgames.app.data.network.GameService
 import com.prueba.appgames.app.ui.GameUiState
 import kotlinx.coroutines.flow.Flow
@@ -12,27 +11,24 @@ class GamesRepository {
 
     private val api = GameService()
 
-    suspend fun getGames(): Flow<GameUiState<List<listGamesModel>>> {
+    suspend fun getGames(): Flow<GameUiState> {
         //val response = api.getGames()
         return flow {
-            val response = try {
-                api.getGames()
-
+            emit(GameUiState.Loading)
+            try {
+                val response = api.getGames()
+                if (response.isNotEmpty()) {
+                    emit(GameUiState.Success(response))
+                } else {
+                    emit(GameUiState.Error("La lista de juegos está vacía"))
+                }
             } catch (e: IOException) {
-                e.printStackTrace()
-                emit(GameUiState.Error(message = "${e.message}"))
-                return@flow
+                emit(GameUiState.Error(e.message))
             } catch (e: HttpException) {
-                e.printStackTrace()
-                emit(GameUiState.Error(message = "${e.message}"))
-                return@flow
-            }  catch (e: Exception) {
-                e.printStackTrace()
-                emit(GameUiState.Error(message = "Error loading products"))
-                return@flow
+                emit(GameUiState.Error(e.message ?: "Error de HTTP"))
+            } catch (e: Exception) {
+                emit(GameUiState.Error(e.message ?: "Error desconocido"))
             }
-
-            emit(GameUiState.Success(response))
         }
     }
 }
