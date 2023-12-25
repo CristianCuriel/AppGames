@@ -1,5 +1,7 @@
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -27,7 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,6 +51,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.prueba.appgames.R
+import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +73,7 @@ fun GameCard(
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            imageGames(game)
+            ImageGames(game)
 
             Column(
                 Modifier
@@ -92,9 +98,9 @@ fun GameCard(
 }
 
 @Composable
-fun imageGames(game: listGamesModel) {
+fun ImageGames(game: listGamesModel) {
 
-    var currentIndex by rememberSaveable { mutableStateOf(0) }
+    var currentIndex by rememberSaveable { mutableIntStateOf(0) }
 
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -103,8 +109,8 @@ fun imageGames(game: listGamesModel) {
             currentIndex = (currentIndex + 1) % game.short_screenshots.size
         }) {
 
-        LazyRow(Modifier.fillMaxSize()){
-            itemsIndexed(game.short_screenshots){ index, imageUrl ->
+        LazyRow(Modifier.fillMaxSize()) {
+            itemsIndexed(game.short_screenshots) { index, imageUrl ->
                 if (index == currentIndex) {
                     var painter = rememberAsyncImagePainter(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -129,15 +135,37 @@ fun imageGames(game: listGamesModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
-                                .size(400.dp),
+                                .size(390.dp),
                             contentScale = ContentScale.Crop
                         )
                     }
                 }// If del index
             }
         }// LazyRow
-
     }// Box
+    indicadorImagen(currentIndex, game.short_screenshots)
+}// ImageGames
+
+@Composable
+fun indicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) {
+    // Indicadores de posición
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        shortScreenshots.forEachIndexed { index, _ ->
+            Box(
+                modifier = Modifier
+                    .size(width = 40.dp, height = 4.dp)
+                    .background(
+                        color = if (index == currentIndex) Color.White else Color.Gray,
+                        shape = CircleShape
+                    )
+            )
+        }
+    }
 }
 
 @Composable
@@ -200,67 +228,108 @@ fun PlataformasGames() {
 }
 
 @Composable
+fun BotonFavorite(
+    isSelected: Boolean,
+    onItemSelected: () -> Unit,
+) {
+
+    var cardColor by remember { mutableStateOf(Color(0xFFF373737)) }
+
+    if (isSelected) {
+        cardColor = Color(0xFFF55A229)
+        Log.i("Cris", "Añadido a favorito")
+    } else {
+        cardColor = Color(0xFFF373737)
+        Log.i("Cris", "Eliminado de favorito")
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        modifier = Modifier
+            .padding(vertical = 6.dp)
+            .size(width = 54.dp, height = 34.dp)
+            .clickable { onItemSelected() },
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+        ) {
+            Icon(
+                Icons.Rounded.Add,
+                contentDescription = "", modifier = Modifier
+                    .size(30.dp),
+                tint = Color.White
+            )
+
+            Text(
+                text = "0",
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+
+            )
+        }
+    }// Card
+
+}
+
+
+@Composable
+fun BotonMore() {
+
+    var cardColor by remember { mutableStateOf(Color(0xFFF373737)) }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        modifier = Modifier
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+            .size(width = 44.dp, height = 34.dp)
+            .clickable {
+                cardColor =
+                    if (cardColor == Color(0xFFF373737)) Color(0xFF55A229) else Color(0xFFF373737)
+            },
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+        ) {
+            Icon(
+                Icons.Rounded.MoreVert,
+                contentDescription = "", modifier = Modifier
+                    .size(26.dp)
+                    .graphicsLayer(rotationZ = 90f),
+                tint = Color.White
+            )
+        }
+
+    }
+}
+
+@Composable
 fun BotonActionGames() {
+
+    var like by remember { mutableStateOf(false) }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF373737)),
-            modifier = Modifier
-                .padding(vertical = 6.dp)
-                .size(width = 54.dp, height = 34.dp),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-            ) {
-                Icon(
-                    Icons.Rounded.Add,
-                    contentDescription = "", modifier = Modifier
-                        .size(30.dp),
-                    tint = Color.White
-                )
 
-                Text(
-                    text = "0",
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
-
-                )
-            }
-        }// Card
-
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF373737)),
-            modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 8.dp)
-                .size(width = 44.dp, height = 34.dp),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-            ) {
-                Icon(
-                    Icons.Rounded.MoreVert,
-                    contentDescription = "", modifier = Modifier
-                        .size(26.dp)
-                        .graphicsLayer(rotationZ = 90f),
-                    tint = Color.White
-                )
-            }
-
+        BotonFavorite(isSelected = like){
+            like=!like
         }
+        BotonMore()
+
 
     }//Row
 }
