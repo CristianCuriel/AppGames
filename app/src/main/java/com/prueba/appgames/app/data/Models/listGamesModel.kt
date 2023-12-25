@@ -20,5 +20,7 @@ data class listGamesModel(
     @SerializedName("tags")
     val tags: List<Tag>,
     val updated: String,
+    @SerializedName("metacritic")
+    val metacritic: Int,
 
     )

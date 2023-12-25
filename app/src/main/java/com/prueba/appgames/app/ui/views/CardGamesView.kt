@@ -1,7 +1,7 @@
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,16 +53,18 @@ import coil.size.Size
 import com.prueba.appgames.R
 import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
+import com.prueba.appgames.app.ui.viewmodel.GameViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameCard(
     game: listGamesModel,
+    viewModel: GameViewModel,
 ) {
 
     ElevatedCard(
         modifier = Modifier
-            .height(420.dp)
+            .height(450.dp)
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF202020)),
@@ -81,14 +83,13 @@ fun GameCard(
                     .padding(16.dp)
             ) {
 
-                PlataformasGames()
+                PlataformasGames(game.metacritic)
 
                 GamesTitles(game.name)
 
-                BotonActionGames()
+                BotonActionGames(viewModel)
 
                 BotonViewMore()
-
 
             }//Column
 
@@ -104,7 +105,7 @@ fun ImageGames(game: listGamesModel) {
 
     Box(modifier = Modifier
         .fillMaxWidth()
-        .height(200.dp)
+        .height(210.dp)
         .clickable {
             currentIndex = (currentIndex + 1) % game.short_screenshots.size
         }) {
@@ -134,7 +135,7 @@ fun ImageGames(game: listGamesModel) {
                             contentDescription = "",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
+                                .height(210.dp)
                                 .size(390.dp),
                             contentScale = ContentScale.Crop
                         )
@@ -196,34 +197,69 @@ fun BotonViewMore() {
     }
 }
 
+
 @Composable
-fun PlataformasGames() {
+fun PlataformasGames(metacritic: Int) {
+
+    val metacriticColor = if(metacritic>73) Color(0xFF60AE42) else Color(0xFFFDCA52)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
     ) {
-        Icon(
-            painterResource(id = R.drawable.logowindows),
-            contentDescription = "", modifier = Modifier
-                .size(26.dp)
-                .padding(end = 8.dp),
-            tint = Color(0xFFFFFFFF)
-        )
-        Icon(
-            painterResource(id = R.drawable.logoplaystation),
-            contentDescription = "", modifier = Modifier
-                .size(26.dp)
-                .padding(end = 8.dp),
-            tint = Color(0xFFFFFFFF)
-        )
-        Icon(
-            painterResource(id = R.drawable.logoxbox),
-            contentDescription = "", modifier = Modifier
-                .size(26.dp)
-                .padding(end = 8.dp),
-            tint = Color(0xFFFFFFFF)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.weight(2f)
+        ) {
+            Icon(
+                painterResource(id = R.drawable.logowindows),
+                contentDescription = "", modifier = Modifier
+                    .size(26.dp)
+                    .padding(end = 8.dp),
+                tint = Color(0xFFFFFFFF)
+            )
+            Icon(
+                painterResource(id = R.drawable.logoplaystation),
+                contentDescription = "", modifier = Modifier
+                    .size(26.dp)
+                    .padding(end = 8.dp),
+                tint = Color(0xFFFFFFFF)
+            )
+            Icon(
+                painterResource(id = R.drawable.logoxbox),
+                contentDescription = "", modifier = Modifier
+                    .size(26.dp)
+                    .padding(end = 8.dp),
+                tint = Color(0xFFFFFFFF)
+            )
+        }//Row
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(width = 32.dp, height = 28.dp)
+                    .border(width = (1/2).dp,
+                        color = metacriticColor,
+                        shape = RoundedCornerShape(3.dp)
+                    )
+
+
+            ) {
+                Text(text = "$metacritic",
+                    fontWeight = FontWeight.ExtraBold,
+                    color = metacriticColor
+                )
+            }
+        }
+
     }//Row
 }
 
@@ -237,10 +273,8 @@ fun BotonFavorite(
 
     if (isSelected) {
         cardColor = Color(0xFFF55A229)
-        Log.i("Cris", "Añadido a favorito")
     } else {
         cardColor = Color(0xFFF373737)
-        Log.i("Cris", "Eliminado de favorito")
     }
 
     Card(
@@ -314,9 +348,9 @@ fun BotonMore() {
 }
 
 @Composable
-fun BotonActionGames() {
+fun BotonActionGames(viewModel: GameViewModel) {
 
-    var like by remember { mutableStateOf(false) }
+    var like by rememberSaveable { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -325,9 +359,10 @@ fun BotonActionGames() {
         horizontalArrangement = Arrangement.Start
     ) {
 
-        BotonFavorite(isSelected = like){
-            like=!like
-        }
+        BotonFavorite(isSelected = like, onItemSelected = {
+            like = !like
+
+        })
         BotonMore()
 
 
