@@ -1,4 +1,4 @@
-package com.prueba.appgames.app.ui
+package com.prueba.appgames.app.ui.views
 
 import GameCard
 import android.widget.Toast
@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.prueba.appgames.app.data.Models.listGamesModel
+import com.prueba.appgames.app.ui.GameUiState
+import com.prueba.appgames.app.ui.viewmodel.GameViewModel
 
 @Composable
 fun NavManager(viewModel: GameViewModel) {
@@ -53,10 +55,7 @@ fun ItemsGamesView(games: List<listGamesModel>){
     ) {
         items(games) { game ->
             //Text(text = game.name)
-            GameCard(
-                backgroundImage = game.background_image,
-                gameTitle = game.name,
-            )
+            GameCard(game)
         }
     }
 } //ItemsGamesView

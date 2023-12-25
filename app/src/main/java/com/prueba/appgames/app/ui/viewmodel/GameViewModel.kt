@@ -1,8 +1,9 @@
-package com.prueba.appgames.app.ui
+package com.prueba.appgames.app.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prueba.appgames.app.domain.GameUseCase
+import com.prueba.appgames.app.ui.GameUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

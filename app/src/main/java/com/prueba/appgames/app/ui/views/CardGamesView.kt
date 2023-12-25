@@ -1,5 +1,8 @@
+
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -21,6 +26,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,26 +46,19 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.prueba.appgames.R
+import com.prueba.appgames.app.data.Models.listGamesModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameCard(
-    backgroundImage: String,
-    gameTitle: String,
+    game: listGamesModel,
 ) {
-
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(backgroundImage)
-            .crossfade(true)
-            .size(Size.ORIGINAL) // Set the target size to load the image at.
-            .build()
-    )
 
     ElevatedCard(
         modifier = Modifier
-            .height(400.dp)
-            .fillMaxWidth(),
+            .height(420.dp)
+            .fillMaxWidth()
+            .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF202020)),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -65,26 +67,7 @@ fun GameCard(
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            if (painter.state is AsyncImagePainter.State.Loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .width(64.dp),
-                    color = Color.White
-                )
-            } else {
-                Image(
-                    painter = painter,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .size(100.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
+            imageGames(game)
 
             Column(
                 Modifier
@@ -94,7 +77,7 @@ fun GameCard(
 
                 PlataformasGames()
 
-                GamesTitles(gameTitle)
+                GamesTitles(game.name)
 
                 BotonActionGames()
 
@@ -106,6 +89,55 @@ fun GameCard(
         }
 
     }
+}
+
+@Composable
+fun imageGames(game: listGamesModel) {
+
+    var currentIndex by rememberSaveable { mutableStateOf(0) }
+
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(200.dp)
+        .clickable {
+            currentIndex = (currentIndex + 1) % game.short_screenshots.size
+        }) {
+
+        LazyRow(Modifier.fillMaxSize()){
+            itemsIndexed(game.short_screenshots){ index, imageUrl ->
+                if (index == currentIndex) {
+                    var painter = rememberAsyncImagePainter(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl.image)
+                            .crossfade(true)
+                            .size(Size.ORIGINAL) // Set the target size to load the image at.
+                            .build()
+                    )
+
+                    if (painter.state is AsyncImagePainter.State.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                                .width(64.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Image(
+                            painter = painter,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .size(400.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }// If del index
+            }
+        }// LazyRow
+
+    }// Box
 }
 
 @Composable
