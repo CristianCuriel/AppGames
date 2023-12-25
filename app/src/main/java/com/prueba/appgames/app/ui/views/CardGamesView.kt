@@ -270,11 +270,14 @@ fun BotonFavorite(
 ) {
 
     var cardColor by remember { mutableStateOf(Color(0xFFF373737)) }
+    var defaultValue = 0
 
     if (isSelected) {
         cardColor = Color(0xFFF55A229)
+        defaultValue+=1
     } else {
         cardColor = Color(0xFFF373737)
+        defaultValue=0
     }
 
     Card(
@@ -300,7 +303,7 @@ fun BotonFavorite(
             )
 
             Text(
-                text = "0",
+                text = "$defaultValue",
                 color = Color.White,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
