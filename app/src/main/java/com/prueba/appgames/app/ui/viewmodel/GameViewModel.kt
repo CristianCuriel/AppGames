@@ -21,21 +21,12 @@ class GameViewModel() : ViewModel() {
     private val _showDialog = MutableLiveData<Boolean>(false)
     val showDialog: LiveData<Boolean> = _showDialog
 
-    private val _changeColor = MutableLiveData<Long>(0xFFF373737)
-    val changeColor: LiveData<Long> = _changeColor
-
     init {
         onCreate()
     }
 
-    fun onChangeCardColor() {
+    fun onshowDialog() {
         _showDialog.value = !_showDialog.value!!
-
-        if (_showDialog.value == true) {
-            _changeColor.value = 0xFFF55A229
-        } else {
-            _changeColor.value = 0xFFF373737
-        }
     }
 
     private fun onCreate() {

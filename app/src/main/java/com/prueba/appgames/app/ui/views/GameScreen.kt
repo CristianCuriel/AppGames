@@ -54,7 +54,6 @@ fun ItemsGamesView(games: List<listGamesModel>, viewModel: GameViewModel){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(games) { game ->
-            //Text(text = game.name)
             GameCard(game, viewModel)
         }
     }

@@ -22,5 +22,7 @@ data class listGamesModel(
     val updated: String,
     @SerializedName("metacritic")
     val metacritic: Int,
+    @SerializedName("parent_platforms")
+    val parent_platforms: List<ParentPlatform>
 
     )
