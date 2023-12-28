@@ -1,4 +1,5 @@
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,6 +53,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.prueba.appgames.R
+import com.prueba.appgames.app.data.Models.ParentPlatform
 import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
 import com.prueba.appgames.app.ui.viewmodel.GameViewModel
@@ -62,9 +65,10 @@ fun GameCard(
     viewModel: GameViewModel,
 ) {
 
+
     ElevatedCard(
         modifier = Modifier
-            .height(450.dp)
+
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF202020)),
@@ -83,18 +87,74 @@ fun GameCard(
                     .padding(16.dp)
             ) {
 
-                PlataformasGames(game.metacritic)
+                PlataformasGames(game.metacritic, game.parent_platforms)
 
                 GamesTitles(game.name)
 
                 BotonActionGames(viewModel)
 
-                BotonViewMore()
+                BotonViewMore(game)
 
             }//Column
 
         }
 
+    }
+}
+
+
+@Composable
+fun previewMore(game: listGamesModel) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Row(
+                modifier = Modifier.weight(1f).padding(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Fecha de lazamiento", color = Color(0xFF6F6F6F), fontSize = 12.sp)
+            }
+
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(game.released, color = Color(0xFFE1E1E1), fontSize = 12.sp)
+            }
+        }
+
+        Divider(
+            Modifier
+                .background(Color(0xFF6F6F6F))
+                .height((0.8).dp)
+                .fillMaxWidth()
+        )
+
+        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Row(
+                modifier = Modifier.weight(1f).padding(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Generos", color = Color(0xFF6F6F6F), fontSize = 12.sp)
+            }
+
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(game.genres.joinToString(separator = ", "){it.name}, color = Color(0xFFE1E1E1), fontSize = 12.sp)
+            }
+        }
+
+        Divider(
+            Modifier
+                .background(Color(0xFF6F6F6F))
+                .height((0.8).dp)
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -180,15 +240,21 @@ fun GamesTitles(gameTitle: String) {
 }
 
 @Composable
-fun BotonViewMore() {
+fun BotonViewMore(game: listGamesModel) {
+    var show by rememberSaveable { mutableStateOf(false) }
+
+    if(show){
+        previewMore(game)
+    }
+
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        TextButton(onClick = { /*TODO*/ }) {
+        TextButton(onClick = { show =!show }) {
             Text(
-                text = "Ver mas",
+                text = if (show) "Ver menos" else "Ver mas" ,
                 textDecoration = TextDecoration.Underline,
                 color = Color.White,
                 fontSize = 12.sp
@@ -199,9 +265,20 @@ fun BotonViewMore() {
 
 
 @Composable
-fun PlataformasGames(metacritic: Int) {
+fun PlataformasGames(
+    metacritic: Int,
+    parentPlatforms: List<ParentPlatform>,
+) {
 
-    val metacriticColor = if(metacritic>73) Color(0xFF60AE42) else Color(0xFFFDCA52)
+    val metacriticColor = if (metacritic > 73) Color(0xFF60AE42) else Color(0xFFFDCA52)
+
+    val platformIconMap = mapOf(
+        "pc" to R.drawable.logowindows,
+        "playstation" to R.drawable.logoplaystation,
+        "xbox" to R.drawable.logoxbox,
+        "mac" to R.drawable.logomac,
+        "nintendo" to R.drawable.nintendo
+    )
 
     Row(
         modifier = Modifier
@@ -213,27 +290,21 @@ fun PlataformasGames(metacritic: Int) {
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier.weight(2f)
         ) {
-            Icon(
-                painterResource(id = R.drawable.logowindows),
-                contentDescription = "", modifier = Modifier
-                    .size(26.dp)
-                    .padding(end = 8.dp),
-                tint = Color(0xFFFFFFFF)
-            )
-            Icon(
-                painterResource(id = R.drawable.logoplaystation),
-                contentDescription = "", modifier = Modifier
-                    .size(26.dp)
-                    .padding(end = 8.dp),
-                tint = Color(0xFFFFFFFF)
-            )
-            Icon(
-                painterResource(id = R.drawable.logoxbox),
-                contentDescription = "", modifier = Modifier
-                    .size(26.dp)
-                    .padding(end = 8.dp),
-                tint = Color(0xFFFFFFFF)
-            )
+
+            parentPlatforms.forEach { P ->
+                Log.i("Cris", P.platform.slug)
+                platformIconMap[P.platform.slug]?.let { iconResId ->
+                    Icon(
+                        painterResource(id = iconResId),
+                        contentDescription = "", modifier = Modifier
+                            .size(26.dp)
+                            .padding(end = 8.dp),
+                        tint = Color(0xFFFFFFFF)
+                    )
+                }
+            }
+
+
         }//Row
 
         Row(
@@ -246,14 +317,16 @@ fun PlataformasGames(metacritic: Int) {
                 modifier = Modifier
                     .padding(4.dp)
                     .size(width = 32.dp, height = 28.dp)
-                    .border(width = (1/2).dp,
+                    .border(
+                        width = (1 / 2).dp,
                         color = metacriticColor,
                         shape = RoundedCornerShape(3.dp)
                     )
 
 
             ) {
-                Text(text = "$metacritic",
+                Text(
+                    text = "$metacritic",
                     fontWeight = FontWeight.ExtraBold,
                     color = metacriticColor
                 )
@@ -270,11 +343,14 @@ fun BotonFavorite(
 ) {
 
     var cardColor by remember { mutableStateOf(Color(0xFFF373737)) }
+    var defaultValue = 0
 
     if (isSelected) {
         cardColor = Color(0xFFF55A229)
+        defaultValue += 1
     } else {
         cardColor = Color(0xFFF373737)
+        defaultValue = 0
     }
 
     Card(
@@ -300,7 +376,7 @@ fun BotonFavorite(
             )
 
             Text(
-                text = "0",
+                text = "$defaultValue",
                 color = Color.White,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
