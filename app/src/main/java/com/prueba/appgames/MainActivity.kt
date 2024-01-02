@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        myheader(GameViewModel())
+                        Myheader(GameViewModel())
                         NavManager(GameViewModel())
                     }
 
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun myheader(gameViewModel: GameViewModel) {
+fun Myheader(gameViewModel: GameViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -205,7 +205,7 @@ fun MyTopAppBard() {
 
             )
         }, title = {
-            search()
+            Search()
         }, colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF151515)),
         actions = {
 
@@ -232,7 +232,7 @@ fun MyTopAppBard() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun search() {
+fun Search() {
 
     // Campo de búsqueda
     var searchText by remember { mutableStateOf("") }

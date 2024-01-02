@@ -104,7 +104,7 @@ fun GameCard(
 
 
 @Composable
-fun previewMore(game: listGamesModel) {
+fun PreviewMore(game: listGamesModel) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Row(
@@ -173,7 +173,7 @@ fun ImageGames(game: listGamesModel) {
         LazyRow(Modifier.fillMaxSize()) {
             itemsIndexed(game.short_screenshots) { index, imageUrl ->
                 if (index == currentIndex) {
-                    var painter = rememberAsyncImagePainter(
+                    val painter = rememberAsyncImagePainter(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl.image)
                             .crossfade(true)
@@ -204,11 +204,11 @@ fun ImageGames(game: listGamesModel) {
             }
         }// LazyRow
     }// Box
-    indicadorImagen(currentIndex, game.short_screenshots)
+    IndicadorImagen(currentIndex, game.short_screenshots)
 }// ImageGames
 
 @Composable
-fun indicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) {
+fun IndicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) {
     // Indicadores de posición
     Row(
         modifier = Modifier
@@ -244,7 +244,7 @@ fun BotonViewMore(game: listGamesModel) {
     var show by rememberSaveable { mutableStateOf(false) }
 
     if(show){
-        previewMore(game)
+        PreviewMore(game)
     }
 
     Row(
