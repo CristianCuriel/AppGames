@@ -1,7 +1,6 @@
 package com.prueba.appgames.app.ui.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prueba.appgames.app.domain.GameUseCase
@@ -18,15 +17,23 @@ class GameViewModel() : ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Loading)
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
-    private val _showDialog = MutableLiveData<Boolean>(false)
-    val showDialog: LiveData<Boolean> = _showDialog
+    private val _showDialog = MutableStateFlow<Boolean>(false)
+    val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
+
+    private val _optionSelected = MutableStateFlow<String>("")
+    val optionSelected: StateFlow<String> = _optionSelected.asStateFlow()
 
     init {
         onCreate()
     }
 
     fun onshowDialog() {
-        _showDialog.value = !_showDialog.value!!
+        _showDialog.value = !_showDialog.value
+    }
+
+    fun selectedFilter(s: String){
+        _optionSelected.value = s
+        Log.i("Cris", "Seleccion: $s")
     }
 
     private fun onCreate() {
