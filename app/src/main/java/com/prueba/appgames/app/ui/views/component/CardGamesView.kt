@@ -1,5 +1,4 @@
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,13 +55,11 @@ import com.prueba.appgames.R
 import com.prueba.appgames.app.data.Models.ParentPlatform
 import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
-import com.prueba.appgames.app.ui.viewmodel.GameViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameCard(
-    game: listGamesModel,
-    viewModel: GameViewModel,
+    game: listGamesModel
 ) {
 
 
@@ -91,7 +88,7 @@ fun GameCard(
 
                 GamesTitles(game.name)
 
-                BotonActionGames(viewModel)
+                BotonActionGames()
 
                 BotonViewMore(game)
 
@@ -292,7 +289,6 @@ fun PlataformasGames(
         ) {
 
             parentPlatforms.forEach { P ->
-                Log.i("Cris", P.platform.slug)
                 platformIconMap[P.platform.slug]?.let { iconResId ->
                     Icon(
                         painterResource(id = iconResId),
@@ -424,7 +420,7 @@ fun BotonMore() {
 }
 
 @Composable
-fun BotonActionGames(viewModel: GameViewModel) {
+fun BotonActionGames() {
 
     var like by rememberSaveable { mutableStateOf(false) }
 

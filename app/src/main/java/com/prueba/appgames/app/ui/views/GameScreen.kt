@@ -38,14 +38,15 @@ fun NavManager(viewModel: GameViewModel) {
 
         is GameUiState.Success -> {
             val games = (uiState as GameUiState.Success).data
-            ItemsGamesView(games, viewModel)
+            ItemsGamesView(games)
         }
     }
 
 }// NavManager
 
 @Composable
-fun ItemsGamesView(games: List<listGamesModel>, viewModel: GameViewModel){
+fun ItemsGamesView( games: List<listGamesModel>) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +55,7 @@ fun ItemsGamesView(games: List<listGamesModel>, viewModel: GameViewModel){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(games) { game ->
-            GameCard(game, viewModel)
+            GameCard(game)
         }
     }
 } //ItemsGamesView

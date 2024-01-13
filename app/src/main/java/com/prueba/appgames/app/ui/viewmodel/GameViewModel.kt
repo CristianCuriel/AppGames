@@ -1,6 +1,5 @@
 package com.prueba.appgames.app.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prueba.appgames.app.domain.GameUseCase
@@ -14,14 +13,14 @@ class GameViewModel() : ViewModel() {
 
     var getGamesUseCase = GameUseCase()
 
-    private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Loading)
-    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
-
-    private val _showDialog = MutableStateFlow<Boolean>(false)
+    private val _showDialog = MutableStateFlow(false)
     val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
 
     private val _optionSelected = MutableStateFlow<String>("")
     val optionSelected: StateFlow<String> = _optionSelected.asStateFlow()
+
+    private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Loading)
+    val uiState: StateFlow<GameUiState> = _uiState
 
     init {
         onCreate()
@@ -31,10 +30,13 @@ class GameViewModel() : ViewModel() {
         _showDialog.value = !_showDialog.value
     }
 
-    fun selectedFilter(s: String){
+    fun selectedFilter(s: String) {
         _optionSelected.value = s
-        Log.i("Cris", "Seleccion: $s")
+        //orderByName()
     }
+
+    //private fun getListGames() = (_uiState.value as GameUiState.Success).data
+
 
     private fun onCreate() {
         viewModelScope.launch {
@@ -43,6 +45,13 @@ class GameViewModel() : ViewModel() {
             }
         }
     }
+
+/*    fun orderByName() {
+        viewModelScope.launch {
+            val sortedList = getListGames().sortedBy { it.name }
+            _uiState.update{GameUiState.Success(sortedList) }
+        }
+    }*/
 
 
 }

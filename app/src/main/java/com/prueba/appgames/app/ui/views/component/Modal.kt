@@ -26,7 +26,7 @@ fun Modal(
 
     ) {
 
-    val options = listOf("Popularidad", "Name", "Fecha de lanzamiento", "Puntuacion media")
+    val options = listOf("Popularidad", "Nombre", "Fecha de lanzamiento", "Puntuacion media")
 
     if (show) {
         Dialog(onDismissRequest = { onDismiss() }) {
@@ -48,7 +48,10 @@ fun Modal(
                     options.forEach {
                         Text(
                             text = it,
-                            modifier = Modifier.clickable { gameViewModel.selectedFilter(it) })
+                            modifier = Modifier.clickable {
+                                gameViewModel.selectedFilter(it)
+                                onDismiss()
+                            })
                     }
 
                 }

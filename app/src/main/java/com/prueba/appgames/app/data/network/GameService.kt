@@ -11,8 +11,9 @@ class GameService {
 
     suspend fun getGames(): List<listGamesModel>{
         return withContext(Dispatchers.IO){
-            val reponse = retrofit.create(RetrofitService::class.java).doGames()
-            reponse.body()?.listGames!!
+            val response = retrofit.create(RetrofitService::class.java).doGames()
+            response.body()?.listGames!!
         }
     }
 }
+

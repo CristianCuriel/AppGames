@@ -141,7 +141,7 @@ fun OrderByPopularity(gameViewModel: GameViewModel) {
                         text = onOrder.ifEmpty { "Seleccionar" },
                         color = Color.White,
                         fontWeight = FontWeight.Black,
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier.padding(horizontal = 2.dp),
                         fontSize = 14.sp
                     )
                     Icon(
