@@ -17,17 +17,29 @@ class GamesRepository {
             emit(GameUiState.Loading)
             try {
                 val response = api.getGames()
-                if (response.isNotEmpty()) {
-                    emit(GameUiState.Success(response))
-                } else {
-                    emit(GameUiState.Error("La lista de juegos está vacía"))
-                }
+                emit(GameUiState.Success(response))
             } catch (e: IOException) {
                 emit(GameUiState.Error(e.message))
             } catch (e: HttpException) {
                 emit(GameUiState.Error(e.message ?: "Error de HTTP"))
             } catch (e: Exception) {
                 emit(GameUiState.Error(e.message ?: "Error desconocido"))
+            }
+        }
+    }
+
+    suspend fun getMoreGames(nextPage:Int): Flow<GameUiState> {
+        return flow {
+
+            try {
+                val response = api.getMoreGames(nextPage)
+                emit(GameUiState.Success(response))
+            } catch (e: IOException) {
+                emit(GameUiState.Error(e.message))
+            } catch (e: HttpException) {
+                emit(GameUiState.Error(e.message ?: "Error de HTTP al cargar mas juegos"))
+            } catch (e: Exception) {
+                emit(GameUiState.Error(e.message ?: "Error desconocido al cargar mas juegos"))
             }
         }
     }

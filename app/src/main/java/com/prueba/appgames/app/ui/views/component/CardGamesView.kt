@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import coil.size.Size
 import com.prueba.appgames.R
 import com.prueba.appgames.app.data.Models.ParentPlatform
 import com.prueba.appgames.app.data.Models.ShortScreenshot
@@ -102,10 +101,17 @@ fun GameCard(
 
 @Composable
 fun PreviewMore(game: listGamesModel) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)) {
             Row(
-                modifier = Modifier.weight(1f).padding(),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -128,9 +134,14 @@ fun PreviewMore(game: listGamesModel) {
                 .fillMaxWidth()
         )
 
-        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)) {
             Row(
-                modifier = Modifier.weight(1f).padding(),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -174,18 +185,20 @@ fun ImageGames(game: listGamesModel) {
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl.image)
                             .crossfade(true)
-                            .size(Size.ORIGINAL) // Set the target size to load the image at.
+                            .size(250,250) // Set the target size to load the image at.
                             .build()
                     )
 
                     if (painter.state is AsyncImagePainter.State.Loading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                                .width(64.dp),
-                            color = Color.White
-                        )
+                        Box(modifier = Modifier.fillMaxSize(), Alignment.Center){
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                                    .width(64.dp),
+                                color = Color.White
+                            )
+                        }
                     } else {
                         Image(
                             painter = painter,

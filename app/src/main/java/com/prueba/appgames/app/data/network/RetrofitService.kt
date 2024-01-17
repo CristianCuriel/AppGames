@@ -8,9 +8,14 @@ import retrofit2.http.Query
 
 interface RetrofitService {
     @GET("games?")
-
     suspend fun doGames(
-        @Query("key") key: String = API_KEY
+        @Query("key") key: String = API_KEY,
+    ): Response<GamesResponse> //GamesResponse es el modelo de datos
+
+    @GET("games?")
+    suspend fun doMoreGames(
+        @Query("key") key: String = API_KEY,
+        @Query("page") page: Int
     ): Response<GamesResponse> //GamesResponse es el modelo de datos
 
 
