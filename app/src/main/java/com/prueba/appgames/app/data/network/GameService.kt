@@ -9,13 +9,6 @@ class GameService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
 
-    suspend fun getGames(): GamesResponse {
-        return withContext(Dispatchers.IO) {
-            val response = retrofit.create(RetrofitService::class.java).doGames()
-            response.body()!!
-        }
-    }
-
     suspend fun getMoreGames(nextPage: Int): GamesResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(RetrofitService::class.java).doMoreGames(page = nextPage)

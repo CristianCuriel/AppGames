@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -28,10 +27,9 @@ import androidx.compose.ui.unit.sp
 import com.prueba.appgames.app.data.Models.listGamesModel
 import com.prueba.appgames.app.ui.GameUiState
 import com.prueba.appgames.app.ui.viewmodel.GameViewModel
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun NavManager(viewModel: GameViewModel, listState: LazyListState, coroutineScope: CoroutineScope) {
+fun NavManager(viewModel: GameViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val gamesList by viewModel.gamesList.collectAsState()
     val context = LocalContext.current
@@ -48,7 +46,7 @@ fun NavManager(viewModel: GameViewModel, listState: LazyListState, coroutineScop
         }
 
         is GameUiState.Success -> {
-            ItemsGamesView(gamesList, viewModel, listState, coroutineScope)
+            ItemsGamesView(gamesList, viewModel)
         }
     }
 
@@ -57,24 +55,10 @@ fun NavManager(viewModel: GameViewModel, listState: LazyListState, coroutineScop
 @Composable
 fun ItemsGamesView(
     games: List<listGamesModel>,
-    viewModel: GameViewModel,
-    listState: LazyListState,
-    coroutineScope: CoroutineScope
+    viewModel: GameViewModel
 ) {
 
     val isLoading by viewModel.isLoading.collectAsState()
-
-/*
-    // Monitorea el desplazamiento y actualiza el estado en el ViewModel
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .collect { offset ->
-                coroutineScope.launch {
-                    viewModel.updateButtonVisibility(offset > 0)
-                }
-            }
-    }
-*/
 
     LazyColumn(
         modifier = Modifier

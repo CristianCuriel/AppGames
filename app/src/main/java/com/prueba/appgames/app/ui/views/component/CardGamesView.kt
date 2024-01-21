@@ -185,7 +185,7 @@ fun ImageGames(game: listGamesModel) {
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl.image)
                             .crossfade(true)
-                            .size(250,250) // Set the target size to load the image at.
+                            .size(200,200) // Set the target size to load the image at.
                             .build()
                     )
 

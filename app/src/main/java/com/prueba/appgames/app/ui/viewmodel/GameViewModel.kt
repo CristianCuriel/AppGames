@@ -1,7 +1,5 @@
 package com.prueba.appgames.app.ui.viewmodel
 
-import android.net.ConnectivityManager
-import android.net.Network
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,25 +30,14 @@ class GameViewModel() : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val _showButton = MutableStateFlow(false)
-    val showButton: StateFlow<Boolean> = _showButton
-
-    // Flow para manejar el estado de la conexión de red
-    private val _isNetworkAvailable = MutableStateFlow(false)
-    val isNetworkAvailable:StateFlow<Boolean> = _isNetworkAvailable
-
 
     init {
         loadMoreGames()
     }
 
-    fun updateButtonVisibility(show: Boolean) {
-        _showButton.value = show
-    }
-
-    private var nextPage = 1
-
     fun loadMoreGames() {
+
+        var nextPage = 1
 
         if (_isLoading.value) return
 
@@ -62,8 +49,8 @@ class GameViewModel() : ViewModel() {
 
                 if (state is GameUiState.Success){
                     val currentGames = _gamesList.value.toMutableList()
-                    val R = state.data.listGames
-                    currentGames.addAll(R)
+                    val r = state.data.listGames
+                    currentGames.addAll(r)
                     _gamesList.update { currentGames }
                     nextPage = calculateNextPage(state.data.next) ?: nextPage
                 }
@@ -83,27 +70,6 @@ class GameViewModel() : ViewModel() {
         _optionSelected.value = s
         //orderByName()
     }
-
-    // NetworkCallback para escuchar cambios en la conectividad
-    val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            _isNetworkAvailable.value = true
-        }
-
-        override fun onLost(network: Network) {
-            _isNetworkAvailable.value = false
-        }
-    }
-
-/*
-    private fun onCreate() {
-        viewModelScope.launch {
-            getGamesUseCase().collect { state ->
-                _uiState.value = state
-                _gamesList.value = (_uiState.value as GameUiState.Success).data.listGames
-            }
-        }
-    }*/
 
     /*    fun orderByName() {
             viewModelScope.launch {
