@@ -17,15 +17,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -58,6 +63,8 @@ import com.prueba.appgames.app.ui.viewmodel.GameViewModel
 import com.prueba.appgames.app.ui.views.NavManager
 import com.prueba.appgames.app.ui.views.component.Modal
 import com.prueba.appgames.ui.theme.AppGamesTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -67,10 +74,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppGamesTheme {
                 // A surface container using the 'background' color from the theme
+
+                val listState = rememberLazyListState()
+                val coroutineScope = rememberCoroutineScope()
+
                 Scaffold(
                     containerColor = Color(0xFF141414),
                     modifier = Modifier.fillMaxSize(),
-                    topBar = { MyTopAppBard() }) { innerPadding ->
+                    topBar = { MyTopAppBard() },
+                    floatingActionButton ={MyfloatingButton(GameViewModel(), listState, coroutineScope)}
+
+                ) { innerPadding ->
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)
@@ -78,7 +92,7 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Myheader(GameViewModel())
-                        NavManager(GameViewModel())
+                        NavManager(GameViewModel(), listState, coroutineScope)
                     }
 
                 }
@@ -88,6 +102,28 @@ class MainActivity : ComponentActivity() {
 
 }
 
+@Composable
+fun MyfloatingButton(
+    gameViewModel: GameViewModel,
+    listState: LazyListState,
+    coroutineScope: CoroutineScope
+) {
+
+    val showButton by gameViewModel.showButton.collectAsState()
+
+    if (showButton) {
+        FloatingActionButton(
+            onClick = {
+                coroutineScope.launch {
+                    listState.animateScrollToItem(0)
+                    gameViewModel.updateButtonVisibility(false)
+                }
+            }
+        ) {
+            Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Ir al inicio")
+        }
+    }
+}
 
 @Composable
 fun Myheader(gameViewModel: GameViewModel) {
@@ -183,7 +219,7 @@ fun OrderByPopularity(gameViewModel: GameViewModel) {
 
     }//Row
 
-   Modal(show = showDialog, onDismiss = {gameViewModel.onshowDialog()}, gameViewModel)
+    Modal(show = showDialog, onDismiss = { gameViewModel.onshowDialog() }, gameViewModel)
 
 }
 

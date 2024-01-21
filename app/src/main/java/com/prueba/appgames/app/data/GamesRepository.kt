@@ -12,18 +12,17 @@ class GamesRepository {
     private val api = GameService()
 
     suspend fun getGames(): Flow<GameUiState> {
-        //val response = api.getGames()
         return flow {
             emit(GameUiState.Loading)
             try {
                 val response = api.getGames()
                 emit(GameUiState.Success(response))
             } catch (e: IOException) {
-                emit(GameUiState.Error(e.message))
+                emit(GameUiState.Error(e.cause!!))
             } catch (e: HttpException) {
-                emit(GameUiState.Error(e.message ?: "Error de HTTP"))
+                emit(GameUiState.Error(e.cause!!))
             } catch (e: Exception) {
-                emit(GameUiState.Error(e.message ?: "Error desconocido"))
+                emit(GameUiState.Error(e.cause!!))
             }
         }
     }
@@ -34,13 +33,10 @@ class GamesRepository {
             try {
                 val response = api.getMoreGames(nextPage)
                 emit(GameUiState.Success(response))
-            } catch (e: IOException) {
-                emit(GameUiState.Error(e.message))
-            } catch (e: HttpException) {
-                emit(GameUiState.Error(e.message ?: "Error de HTTP al cargar mas juegos"))
-            } catch (e: Exception) {
-                emit(GameUiState.Error(e.message ?: "Error desconocido al cargar mas juegos"))
+            } catch (e:Throwable) {
+                emit(GameUiState.Error(e))
             }
         }
     }
+
 }
