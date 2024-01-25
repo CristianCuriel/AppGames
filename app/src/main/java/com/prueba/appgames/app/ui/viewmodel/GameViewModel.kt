@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prueba.appgames.app.data.Models.listGamesModel
 import com.prueba.appgames.app.domain.GameUseCase
-import com.prueba.appgames.app.ui.GameUiState
+import com.prueba.appgames.app.ui.states.GameUiState
+import com.prueba.appgames.app.ui.states.InfoGameUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -27,8 +28,13 @@ class GameViewModel() : ViewModel() {
     private val _gamesList = MutableStateFlow<List<listGamesModel>>(emptyList())
     val gamesList: StateFlow<List<listGamesModel>> = _gamesList
 
+    private val _uiStateGameInfo = MutableStateFlow<InfoGameUiState>(InfoGameUiState.Loading)
+    val uiStateGameInfo: StateFlow<InfoGameUiState> = _uiStateGameInfo
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    private var nextPage = 1
 
 
     init {
@@ -36,8 +42,6 @@ class GameViewModel() : ViewModel() {
     }
 
     fun loadMoreGames() {
-
-        var nextPage = 1
 
         if (_isLoading.value) return
 

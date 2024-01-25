@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -54,17 +55,18 @@ import com.prueba.appgames.R
 import com.prueba.appgames.app.data.Models.ParentPlatform
 import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
+import com.prueba.appgames.app.data.Routes.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameCard(
-    game: listGamesModel
+    game: listGamesModel,
+    navigationController: NavHostController
 ) {
 
 
     ElevatedCard(
         modifier = Modifier
-
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF202020)),
@@ -85,7 +87,7 @@ fun GameCard(
 
                 PlataformasGames(game.metacritic, game.parent_platforms)
 
-                GamesTitles(game.name)
+                GamesTitles(game, navigationController)
 
                 BotonActionGames()
 
@@ -240,12 +242,13 @@ fun IndicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) 
 }
 
 @Composable
-fun GamesTitles(gameTitle: String) {
+fun GamesTitles(gameTitle: listGamesModel, navigationController: NavHostController) {
     Text(
-        text = gameTitle,
+        text = gameTitle.name,
         fontWeight = FontWeight.ExtraBold,
         fontSize = 24.sp,
-        color = Color.White
+        color = Color.White,
+        modifier = Modifier.clickable { navigationController.navigate(Routes.Screen2.createRoute(gameTitle.id)) }
     )
 }
 

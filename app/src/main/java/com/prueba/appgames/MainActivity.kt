@@ -28,9 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.prueba.appgames.app.data.Routes.Routes
 import com.prueba.appgames.app.ui.viewmodel.GameViewModel
+import com.prueba.appgames.app.ui.views.MyScreen2
 import com.prueba.appgames.app.ui.views.NavManager
-import com.prueba.appgames.app.ui.views.component.Myheader
 import com.prueba.appgames.app.ui.views.component.Search
 import com.prueba.appgames.ui.theme.AppGamesTheme
 
@@ -45,8 +51,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     containerColor = Color(0xFF141414),
                     modifier = Modifier.fillMaxSize(),
-                    topBar = { MyTopAppBard() },
-                    floatingActionButton ={}
+                    topBar = { MyTopAppBard() }
 
                 ) { innerPadding ->
                     Column(
@@ -55,8 +60,25 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        Myheader(GameViewModel())
-                        NavManager(GameViewModel())
+
+                        val navigationController = rememberNavController()
+
+                        NavHost(
+                            navController = navigationController,
+                            startDestination = Routes.Screen1.route
+                        ){
+                            composable(Routes.Screen1.route) { NavManager(GameViewModel(), navigationController) }
+                            composable(
+                                Routes.Screen2.route,
+                                arguments = listOf(navArgument("name") { type = NavType.StringType })
+                            ) { backStackEntrey ->
+                                val a: String? = backStackEntrey.arguments?.getString("name")
+                                MyScreen2(navigationController, a!!)
+                            }
+                        }
+
+                        //
+                        //NavManager(GameViewModel())
                     }
 
                 }
@@ -65,7 +87,6 @@ class MainActivity : ComponentActivity() {
     }
 
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

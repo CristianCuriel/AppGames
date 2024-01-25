@@ -1,4 +1,4 @@
-package com.prueba.appgames.app.ui
+package com.prueba.appgames.app.ui.states
 
 import com.prueba.appgames.app.data.network.Response.GamesResponse
 

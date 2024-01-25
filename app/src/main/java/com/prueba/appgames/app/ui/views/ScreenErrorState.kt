@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import okio.IOException
 import retrofit2.HttpException
 
 
@@ -31,6 +32,11 @@ fun ScreenErrorState(error: Throwable) {
         is HttpException -> {
             httpCode = error.code().toString()
             errorBody = error.response()?.errorBody()?.string().toString()
+        }
+
+        is IOException ->{
+            errorBody = error.message.toString()
+            httpCode = error.cause?.toString() ?: "Error"
         }
 
         is Exception -> {
