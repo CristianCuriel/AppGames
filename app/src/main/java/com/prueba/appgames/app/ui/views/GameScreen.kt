@@ -85,11 +85,6 @@ fun ItemsGamesView(
         }
     }
 
-/*    if(listState.firstVisibleItemIndex > 0) {
-        viewModel.showButtonFloating(listState.firstVisibleItemIndex > 0)
-        Log.i("Cris", "firstVisibleItemIndex: ${firstVisibleItemIndex} - showButton: ${showButton}")
-    }*/
-
 
 
 } //ItemsGamesView
