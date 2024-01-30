@@ -40,7 +40,7 @@ fun ScreenErrorState(error: Throwable) {
         }
 
         is Exception -> {
-            errorBody = error.message.toString()
+            errorBody = error.stackTrace.toString()
             httpCode = error.cause?.toString() ?: "Error"
         }
     }

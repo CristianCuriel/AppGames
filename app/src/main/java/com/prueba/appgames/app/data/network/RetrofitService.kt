@@ -22,8 +22,8 @@ interface RetrofitService {
 
     @GET("games/{id}?")
     suspend fun doInfoGame(
-        @Query("key") key: String = API_KEY,
-        @Path("id") idGame: Int
+        @Path("id") idGame: Int,
+        @Query("key") key: String = API_KEY
     ): Response<GameInfoResponse> //GamesResponse es el modelo de datos
 
 

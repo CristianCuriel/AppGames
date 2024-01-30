@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -67,13 +68,17 @@ class MainActivity : ComponentActivity() {
                             navController = navigationController,
                             startDestination = Routes.Screen1.route
                         ){
-                            composable(Routes.Screen1.route) { NavManager(GameViewModel(), navigationController) }
+                            composable(Routes.Screen1.route) {
+                                val viewModel: GameViewModel = viewModel()
+                                NavManager( viewModel, navigationController)
+                            }
                             composable(
                                 Routes.Screen2.route,
-                                arguments = listOf(navArgument("name") { type = NavType.StringType })
+                                arguments = listOf(navArgument("idGame") { type = NavType.IntType })
                             ) { backStackEntrey ->
-                                val a: String? = backStackEntrey.arguments?.getString("name")
-                                MyScreen2(navigationController, a!!)
+                                val viewModel: GameViewModel = viewModel()
+                                val a: Int? = backStackEntrey.arguments?.getInt("idGame")
+                                MyScreen2(viewModel, a!!)
                             }
                         }
 

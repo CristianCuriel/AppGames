@@ -1,7 +1,6 @@
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,6 +55,7 @@ import com.prueba.appgames.app.data.Models.ParentPlatform
 import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
 import com.prueba.appgames.app.data.Routes.Routes
+import com.prueba.appgames.app.ui.views.component.MetaScore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -283,8 +283,6 @@ fun PlataformasGames(
     parentPlatforms: List<ParentPlatform>,
 ) {
 
-    val metacriticColor = if (metacritic > 73) Color(0xFF60AE42) else Color(0xFFFDCA52)
-
     val platformIconMap = mapOf(
         "pc" to R.drawable.logowindows,
         "playstation" to R.drawable.logoplaystation,
@@ -324,25 +322,7 @@ fun PlataformasGames(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.weight(1f)
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(width = 32.dp, height = 28.dp)
-                    .border(
-                        width = (1 / 2).dp,
-                        color = metacriticColor,
-                        shape = RoundedCornerShape(3.dp)
-                    )
-
-
-            ) {
-                Text(
-                    text = "$metacritic",
-                    fontWeight = FontWeight.ExtraBold,
-                    color = metacriticColor
-                )
-            }
+            MetaScore(metacritic)
         }
 
     }//Row
