@@ -191,7 +191,7 @@ fun InfoGame(data: GameInfoResponse, viewModel: GameViewModel) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        getAbout(data.description)
+        GetAbout(data.description)
 
         Spacer(modifier = Modifier.height(14.dp))
 
@@ -282,115 +282,8 @@ fun BodyPlatformsInfo(
     }
 }
 
-/*
-@Preview
 @Composable
-fun categorias() {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 8.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(RoundedCornerShape(40.dp))
-                        .background(Color.Green)
-                )
-                Text(
-                    text = "Exceptional",
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "4020", fontSize = 14.sp, color = Color.DarkGray)
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(horizontal = 12.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(RoundedCornerShape(40.dp))
-                        .background(Color.Blue)
-                )
-                Text(
-                    text = "Recommended",
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "2228", fontSize = 14.sp, color = Color.DarkGray)
-            }
-
-
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(RoundedCornerShape(40.dp))
-                        .background(Color.Yellow)
-                )
-                Text(
-                    text = "Meh",
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "343", fontSize = 14.sp, color = Color.DarkGray)
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(horizontal = 12.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(RoundedCornerShape(40.dp))
-                        .background(Color.Red)
-                )
-                Text(
-                    text = "Skip",
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "2228", fontSize = 14.sp, color = Color.DarkGray)
-            }
-
-
-        }
-    }
-
-}
-*/
-
-@Composable
-fun getAbout(description: String) {
+fun GetAbout(description: String) {
     Column(
         Modifier
             .fillMaxWidth(), horizontalAlignment = Alignment.Start
