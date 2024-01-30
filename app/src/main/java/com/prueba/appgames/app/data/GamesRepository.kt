@@ -1,34 +1,36 @@
 package com.prueba.appgames.app.data
 
 import com.prueba.appgames.app.data.network.GameService
-import com.prueba.appgames.app.ui.GameUiState
+import com.prueba.appgames.app.ui.states.GameUiState
+import com.prueba.appgames.app.ui.states.InfoGameUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okio.IOException
-import retrofit2.HttpException
 
 class GamesRepository {
 
     private val api = GameService()
 
-    suspend fun getGames(): Flow<GameUiState> {
-        //val response = api.getGames()
+
+    suspend fun getMoreGames(nextPage:Int): Flow<GameUiState> {
         return flow {
-            emit(GameUiState.Loading)
             try {
-                val response = api.getGames()
-                if (response.isNotEmpty()) {
-                    emit(GameUiState.Success(response))
-                } else {
-                    emit(GameUiState.Error("La lista de juegos está vacía"))
-                }
-            } catch (e: IOException) {
-                emit(GameUiState.Error(e.message))
-            } catch (e: HttpException) {
-                emit(GameUiState.Error(e.message ?: "Error de HTTP"))
-            } catch (e: Exception) {
-                emit(GameUiState.Error(e.message ?: "Error desconocido"))
+                val response = api.getMoreGames(nextPage)
+                emit(GameUiState.Success(response))
+            } catch (e:Throwable) {
+                emit(GameUiState.Error(e))
             }
         }
     }
+
+    suspend fun getInfoGame(idGame:Int): Flow<InfoGameUiState> {
+        return flow {
+            try {
+                val response = api.getInfoGame(idGame)
+                emit(InfoGameUiState.Success(response))
+            } catch (e:Throwable) {
+                emit(InfoGameUiState.Error(e))
+            }
+        }
+    }
+
 }

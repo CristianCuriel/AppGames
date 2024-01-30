@@ -1,8 +1,6 @@
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,27 +46,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import coil.size.Size
 import com.prueba.appgames.R
 import com.prueba.appgames.app.data.Models.ParentPlatform
 import com.prueba.appgames.app.data.Models.ShortScreenshot
 import com.prueba.appgames.app.data.Models.listGamesModel
-import com.prueba.appgames.app.ui.viewmodel.GameViewModel
+import com.prueba.appgames.app.data.Routes.Routes
+import com.prueba.appgames.app.ui.views.component.MetaScore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameCard(
     game: listGamesModel,
-    viewModel: GameViewModel,
+    navigationController: NavHostController
 ) {
 
 
     ElevatedCard(
         modifier = Modifier
-
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF202020)),
@@ -89,9 +87,9 @@ fun GameCard(
 
                 PlataformasGames(game.metacritic, game.parent_platforms)
 
-                GamesTitles(game.name)
+                GamesTitles(game, navigationController)
 
-                BotonActionGames(viewModel)
+                BotonActionGames()
 
                 BotonViewMore(game)
 
@@ -104,11 +102,18 @@ fun GameCard(
 
 
 @Composable
-fun previewMore(game: listGamesModel) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+fun PreviewMore(game: listGamesModel) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)) {
             Row(
-                modifier = Modifier.weight(1f).padding(),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -131,9 +136,14 @@ fun previewMore(game: listGamesModel) {
                 .fillMaxWidth()
         )
 
-        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)) {
             Row(
-                modifier = Modifier.weight(1f).padding(),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -173,22 +183,24 @@ fun ImageGames(game: listGamesModel) {
         LazyRow(Modifier.fillMaxSize()) {
             itemsIndexed(game.short_screenshots) { index, imageUrl ->
                 if (index == currentIndex) {
-                    var painter = rememberAsyncImagePainter(
+                    val painter = rememberAsyncImagePainter(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl.image)
                             .crossfade(true)
-                            .size(Size.ORIGINAL) // Set the target size to load the image at.
+                            .size(200,200) // Set the target size to load the image at.
                             .build()
                     )
 
                     if (painter.state is AsyncImagePainter.State.Loading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                                .width(64.dp),
-                            color = Color.White
-                        )
+                        Box(modifier = Modifier.fillMaxSize(), Alignment.Center){
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                                    .width(64.dp),
+                                color = Color.White
+                            )
+                        }
                     } else {
                         Image(
                             painter = painter,
@@ -204,11 +216,11 @@ fun ImageGames(game: listGamesModel) {
             }
         }// LazyRow
     }// Box
-    indicadorImagen(currentIndex, game.short_screenshots)
+    IndicadorImagen(currentIndex, game.short_screenshots)
 }// ImageGames
 
 @Composable
-fun indicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) {
+fun IndicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) {
     // Indicadores de posición
     Row(
         modifier = Modifier
@@ -230,12 +242,13 @@ fun indicadorImagen(currentIndex: Int, shortScreenshots: List<ShortScreenshot>) 
 }
 
 @Composable
-fun GamesTitles(gameTitle: String) {
+fun GamesTitles(gameTitle: listGamesModel, navigationController: NavHostController) {
     Text(
-        text = gameTitle,
+        text = gameTitle.name,
         fontWeight = FontWeight.ExtraBold,
         fontSize = 24.sp,
-        color = Color.White
+        color = Color.White,
+        modifier = Modifier.clickable { navigationController.navigate(Routes.Screen2.createRoute(gameTitle.id)) }
     )
 }
 
@@ -244,7 +257,7 @@ fun BotonViewMore(game: listGamesModel) {
     var show by rememberSaveable { mutableStateOf(false) }
 
     if(show){
-        previewMore(game)
+        PreviewMore(game)
     }
 
     Row(
@@ -270,8 +283,6 @@ fun PlataformasGames(
     parentPlatforms: List<ParentPlatform>,
 ) {
 
-    val metacriticColor = if (metacritic > 73) Color(0xFF60AE42) else Color(0xFFFDCA52)
-
     val platformIconMap = mapOf(
         "pc" to R.drawable.logowindows,
         "playstation" to R.drawable.logoplaystation,
@@ -292,7 +303,6 @@ fun PlataformasGames(
         ) {
 
             parentPlatforms.forEach { P ->
-                Log.i("Cris", P.platform.slug)
                 platformIconMap[P.platform.slug]?.let { iconResId ->
                     Icon(
                         painterResource(id = iconResId),
@@ -312,25 +322,7 @@ fun PlataformasGames(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.weight(1f)
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(width = 32.dp, height = 28.dp)
-                    .border(
-                        width = (1 / 2).dp,
-                        color = metacriticColor,
-                        shape = RoundedCornerShape(3.dp)
-                    )
-
-
-            ) {
-                Text(
-                    text = "$metacritic",
-                    fontWeight = FontWeight.ExtraBold,
-                    color = metacriticColor
-                )
-            }
+            MetaScore(metacritic)
         }
 
     }//Row
@@ -424,7 +416,7 @@ fun BotonMore() {
 }
 
 @Composable
-fun BotonActionGames(viewModel: GameViewModel) {
+fun BotonActionGames() {
 
     var like by rememberSaveable { mutableStateOf(false) }
 
